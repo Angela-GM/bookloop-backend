@@ -1,0 +1,133 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  password     String
+  role         Role     @default(USER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  books              Book[]         @relation("UserBooks")
+  exchangesSent      Exchange[]     @relation("Sender")
+  exchangesReceived  Exchange[]     @relation("Receiver")
+  sentMessages       Message[]      @relation("SentMessages")
+  receivedMessages   Message[]      @relation("ReceivedMessages")
+  reviewsGiven       Review[]       @relation("Author")
+  reviewsReceived    Review[]       @relation("Target")
+  wallet             Wallet?        @relation("UserWallet")
+}
+
+
+
+model Book {
+  id          String   @id @default(cuid())
+  title       String
+  author      String
+  isbn        String?
+  description String?
+  imageUrl    String?
+  condition   BookCondition
+  available   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  ownerId     String
+  owner       User     @relation("UserBooks", fields: [ownerId], references: [id])
+
+  exchange    Exchange? // Relación 1:1 opcional
+}
+
+model Wallet {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation("UserWallet", fields: [userId], references: [id])
+  balance   Int      @default(0)
+  movements Movement[]
+}
+
+model Movement {
+  id        String   @id @default(cuid())
+  walletId  String
+  amount    Int
+  type      MovementType
+  reason    String?
+  createdAt DateTime @default(now())
+
+  wallet    Wallet   @relation(fields: [walletId], references: [id])
+}
+
+model Exchange {
+  id            String   @id @default(cuid())
+  bookId        String   @unique
+  senderId      String
+  receiverId    String
+  status        ExchangeStatus @default(PENDING)
+  createdAt     DateTime @default(now())
+  confirmedAt   DateTime?
+
+  book          Book     @relation(fields: [bookId], references: [id])
+  sender        User     @relation("Sender", fields: [senderId], references: [id])
+  receiver      User     @relation("Receiver", fields: [receiverId], references: [id])
+}
+
+model Message {
+  id          String   @id @default(cuid())
+  senderId    String
+  receiverId  String
+  exchangeId  String?
+  content     String
+  createdAt   DateTime @default(now())
+
+  sender      User     @relation("SentMessages", fields: [senderId], references: [id])
+  receiver    User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+}
+
+
+model Review {
+  id        String   @id @default(cuid())
+  authorId  String
+  targetId  String
+  rating    Int      // 1 a 5
+  comment   String?
+  createdAt DateTime @default(now())
+
+  author    User     @relation("Author", fields: [authorId], references: [id])
+  target    User     @relation("Target", fields: [targetId], references: [id])
+}
+
+// Enums
+
+enum Role {
+  USER
+  ADMIN
+  BANNED
+}
+
+enum BookCondition {
+  NEW
+  GOOD
+  FAIR
+  POOR
+}
+
+enum ExchangeStatus {
+  PENDING
+  ACCEPTED
+  IN_TRANSIT
+  DELIVERED
+  CANCELED
+}
+
+enum MovementType {
+  INCOME
+  EXPENSE
+}
