@@ -1,0 +1,13 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel or Railway Deploy
+        run: echo "Aquí iría el comando o webhook para desplegar"
