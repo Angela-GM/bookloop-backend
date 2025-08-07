@@ -3,6 +3,8 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { Request } from 'express';
+import { AuthGuard } from '@nestjs/passport';
+import { User } from '@prisma/client';
 
 @Controller('auth')
 export class AuthController {
@@ -24,9 +26,9 @@ export class AuthController {
     return this.authService.login(user);
   }
 
-  @UseGuards()
+  @UseGuards(AuthGuard('jwt'))
   @Get('whoami')
-  async whoAmI(@Req() req: Request) {
+  async whoAmI(@Req() req: Request & { user: User }) {
     return req.user;
   }
 }
