@@ -63,6 +63,9 @@ Crea un archivo .env con tus configuraciones:
 PORT=3000
 ```
 
+## 🗄️Base de datos - Diagrama ER
+![alt text](image.png)
+
 ## 🤝 Contribuir
 1. Haz un fork del repositorio
 
