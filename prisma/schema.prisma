@@ -24,6 +24,10 @@ model User {
   reviewsGiven       Review[]       @relation("Author")
   reviewsReceived    Review[]       @relation("Target")
   wallet             Wallet?        @relation("UserWallet")
+  buyerTransactions  Transaction[]  @relation("BuyerTransactions")
+  sellerTransactions Transaction[]  @relation("SellerTransactions")
+  adminActions       AdminAction[]  @relation("UserAdminActions")
+  invitesSent        Invite[]       @relation("Inviter")
 }
 
 
@@ -39,11 +43,14 @@ model Book {
   available   Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  price       Int @default(10)
+  location    String
 
   ownerId     String
   owner       User     @relation("UserBooks", fields: [ownerId], references: [id])
 
   exchange    Exchange? // Relación 1:1 opcional
+  transactions Transaction[]
 }
 
 model Wallet {
@@ -103,6 +110,43 @@ model Review {
   author    User     @relation("Author", fields: [authorId], references: [id])
   target    User     @relation("Target", fields: [targetId], references: [id])
 }
+
+model Transaction {
+  id         String   @id @default(cuid())
+  bookId     String
+  buyerId    String
+  sellerId   String?
+  amount     Int
+  createdAt  DateTime @default(now())
+
+  book       Book     @relation(fields: [bookId], references: [id])
+  buyer      User     @relation("BuyerTransactions", fields: [buyerId], references: [id])
+  seller     User?    @relation("SellerTransactions", fields: [sellerId], references: [id])
+}
+
+model AdminAction {
+  id         String   @id @default(cuid())
+  adminId    String
+  targetType String   // "book", "exchange", "user"
+  targetId   String
+  action     String   // "approve", "ban", "resolve"
+  notes      String?
+  createdAt  DateTime @default(now())
+  admin      User     @relation("UserAdminActions", fields: [adminId], references: [id])
+}
+
+model Invite {
+  id         String   @id @default(cuid())
+  inviterId  String
+  inviteeId  String?
+  code       String   @unique
+  redeemed   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  inviter    User     @relation("Inviter", fields: [inviterId], references: [id])
+}
+
+
+
 
 // Enums
 
