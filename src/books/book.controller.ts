@@ -47,10 +47,13 @@ export class BookController {
       required: [
         'title',
         'author',
+        'isbn',
+        'description',
         'condition',
         'location',
         'price',
         'ownerId',
+        'image',
       ],
     },
   })

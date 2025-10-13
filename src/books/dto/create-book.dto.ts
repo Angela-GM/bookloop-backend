@@ -1,6 +1,6 @@
-import { IsString, IsOptional, IsInt, IsEnum } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { BookConditionEnum } from '../enums/book-condition.enum';
+import { IsString, IsInt, IsEnum } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { BookConditionEnum } from 'src/common';
 
 export class CreateBookDto {
   @ApiProperty({ example: 'El nombre del viento' })
@@ -11,17 +11,15 @@ export class CreateBookDto {
   @IsString()
   author: string;
 
-  @ApiPropertyOptional({ example: '9788498382540' })
-  @IsOptional()
+  @ApiProperty({ example: '9788498382540' })
   @IsString()
-  isbn?: string;
+  isbn: string;
 
-  @ApiPropertyOptional({ example: 'Fantasía épica y poética' })
-  @IsOptional()
+  @ApiProperty({ example: 'Fantasía épica y poética' })
   @IsString()
-  description?: string;
+  description: string;
 
-  // @ApiProperty({ enum: BookConditionEnum, example: BookConditionEnum.GOOD })
+  @ApiProperty({ enum: BookConditionEnum, example: BookConditionEnum.GOOD })
   @IsEnum(BookConditionEnum)
   condition: BookConditionEnum;
 

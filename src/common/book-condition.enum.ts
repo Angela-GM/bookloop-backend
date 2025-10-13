@@ -1,5 +1,6 @@
 export enum BookConditionEnum {
+  NEW = 'NEW',
   GOOD = 'GOOD',
-  EXCELLENT = 'EXCELLENT',
   FAIR = 'FAIR',
+  POOR = 'POOR',
 }
