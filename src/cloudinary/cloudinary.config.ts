@@ -12,7 +12,7 @@ cloudinary.config({
 export const storage = new CloudinaryStorage({
   cloudinary,
   params: (req, file) => ({
-    public_id: `${Date.now()}-${file.originalname.replace(/\s+/g, '-')}`,
+    public_id: `${Date.now()}-${file.originalname.replace(/\.[^/.]+$/, '').replace(/\s+/g, '-')}`,
     allowed_formats: ['jpg', 'png', 'jpeg'],
     folder: 'bookloop',
   }),
