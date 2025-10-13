@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { BookCondition } from '@prisma/client';
+import { PaginationQueryDto } from './dto/pagination-query.dto';
 
 @Injectable()
 export class BookService {
@@ -20,6 +21,20 @@ export class BookService {
         price: Number(price),
         owner: {
           connect: { id: ownerId },
+        },
+      },
+    });
+  }
+
+  async findAll() {
+    return this.prisma.book.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: {
+        owner: {
+          select: {
+            id: true,
+            name: true,
+          },
         },
       },
     });
