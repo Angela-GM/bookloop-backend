@@ -51,7 +51,11 @@ async function main() {
       description: 'Distopía clásica sobre vigilancia y control.',
       imageUrl: 'https://example.com/1984.jpg',
       condition: BookCondition.GOOD,
-      ownerId: user1.id,
+      price: 10,
+      location: 'Tarragona',
+      owner: {
+        connect: { id: user1.id },
+      },
     },
   });
 
@@ -63,7 +67,11 @@ async function main() {
       description: 'Un cuento filosófico para todas las edades.',
       imageUrl: 'https://example.com/principito.jpg',
       condition: BookCondition.FAIR,
-      ownerId: user2.id,
+      price: 10,
+      location: 'Tarragona',
+      owner: {
+        connect: { id: user2.id },
+      },
     },
   });
 

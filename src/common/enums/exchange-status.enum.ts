@@ -1,0 +1,7 @@
+export enum ExchangeStatusEnum {
+  PENDING = 'PENDING',
+  ACCEPTED = 'ACCEPTED',
+  IN_TRANSIT = 'IN_TRANSIT',
+  DELIVERED = 'DELIVERED',
+  CANCELED = 'CANCELED',
+}
