@@ -10,6 +10,7 @@ import {
   Param,
   Req,
   UseGuards,
+  Delete,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -93,5 +94,13 @@ export class BookController {
     @Req() req: RequestWithUser,
   ) {
     return this.bookService.updateBook(id, body, req.user.id, req.user.role);
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({ summary: 'Delete book for ID' })
+  @ApiResponse({ status: 200, description: 'Book deleted success' })
+  async deleteBook(@Param('id') id: string, @Req() req: RequestWithUser) {
+    return this.bookService.deleteBook(id, req.user.id, req.user.role);
   }
 }

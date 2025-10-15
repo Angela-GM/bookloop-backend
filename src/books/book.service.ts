@@ -92,9 +92,39 @@ export class BookService {
       throw new ForbiddenException('You are not permitted to edit this book.');
     }
 
-    return this.prisma.book.update({
+    const updatedBook = await this.prisma.book.update({
       where: { id },
       data,
     });
+
+    return {
+      message: 'Book updated successfully',
+      book: updatedBook,
+    };
+  }
+
+  async deleteBook(id: string, userId: string, role: 'USER' | 'ADMIN') {
+    const book = await this.prisma.book.findUnique({
+      where: { id },
+    });
+
+    if (!book) {
+      throw new NotFoundException(`Book with ID ${id} not found`);
+    }
+
+    const isOwner = book.ownerId === userId;
+    const isAdmin = role === 'ADMIN';
+
+    if (!isOwner && !isAdmin) {
+      throw new ForbiddenException(
+        'You are not permitted to delete this book.',
+      );
+    }
+    await this.prisma.book.delete({ where: { id } });
+
+    return {
+      message: 'Book deleted successfully',
+      deletedBookId: id,
+    };
   }
 }
