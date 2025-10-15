@@ -8,10 +8,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-// import { storage } from '../cloudinary/cloudinary.config';
 import { CreateBookDto } from './dto/create-book.dto';
 import { BookService } from './book.service';
-import { Express } from 'express'; // ← Asegurate de tener esto
+import { Express } from 'express';
 import {
   ApiBody,
   ApiOperation,
@@ -19,8 +18,8 @@ import {
   ApiTags,
   ApiConsumes,
 } from '@nestjs/swagger';
-import { BookResponseDto } from './dto/books-response.dto';
 import { PaginationQueryDto } from './dto/pagination-query.dto';
+import { PaginatedBooksResponseDto } from './dto/paginated-books-response.dto';
 import { storage } from 'src/cloudinary/cloudinary.config';
 
 @ApiTags('books')
@@ -70,10 +69,10 @@ export class BookController {
     return this.bookService.createBook({ ...body, imageUrl: file?.path });
   }
 
-  @ApiResponse({ status: 200, type: BookResponseDto, isArray: true })
+  @ApiResponse({ status: 200, type: PaginatedBooksResponseDto })
   @Get()
-  @ApiOperation({ summary: 'Get all books' })
-  async findAll() {
-    return this.bookService.findAll();
+  @ApiOperation({ summary: 'Get all books with pagination' })
+  async findAll(@Query() paginationQuery: PaginationQueryDto) {
+    return this.bookService.findAll(paginationQuery);
   }
 }
