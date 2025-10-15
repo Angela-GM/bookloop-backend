@@ -1,6 +1,6 @@
 import { IsString, IsInt, IsEnum } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { BookConditionEnum } from 'src/common';
+import { BookConditionEnum } from 'src/common/enums';
 
 export class CreateBookDto {
   @ApiProperty({ example: 'El nombre del viento' })

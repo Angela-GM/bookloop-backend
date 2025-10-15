@@ -6,6 +6,10 @@ import {
   UseInterceptors,
   Get,
   Query,
+  Put,
+  Param,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -21,6 +25,9 @@ import {
 import { PaginationQueryDto } from './dto/pagination-query.dto';
 import { PaginatedBooksResponseDto } from './dto/paginated-books-response.dto';
 import { storage } from 'src/cloudinary/cloudinary.config';
+import { UpdateBookDto } from './dto/update-book.dto';
+import { RequestWithUser } from 'src/common/types/request-with-user.interface';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('books')
 @Controller('books')
@@ -74,5 +81,17 @@ export class BookController {
   @ApiOperation({ summary: 'Get all books with pagination' })
   async findAll(@Query() paginationQuery: PaginationQueryDto) {
     return this.bookService.findAll(paginationQuery);
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({ summary: 'Edit book for ID' })
+  @ApiResponse({ status: 200, description: 'Book updated success' })
+  async updateBook(
+    @Param('id') id: string,
+    @Body() body: UpdateBookDto,
+    @Req() req: RequestWithUser,
+  ) {
+    return this.bookService.updateBook(id, body, req.user.id, req.user.role);
   }
 }

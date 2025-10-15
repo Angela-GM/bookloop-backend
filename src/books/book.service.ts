@@ -1,8 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { PaginationQueryDto } from './dto/pagination-query.dto';
 import { BookCondition } from '@prisma/client';
+import { UpdateBookDto } from './dto/update-book.dto';
 
 @Injectable()
 export class BookService {
@@ -64,5 +69,32 @@ export class BookService {
         hasPreviousPage,
       },
     };
+  }
+
+  async updateBook(
+    id: string,
+    data: UpdateBookDto,
+    userId: string,
+    role: 'USER' | 'ADMIN',
+  ) {
+    const book = await this.prisma.book.findUnique({
+      where: { id },
+    });
+
+    if (!book) {
+      throw new NotFoundException(`Book with ID ${id} not found`);
+    }
+
+    const isOwner = book.ownerId === userId;
+    const isAdmin = role === 'ADMIN';
+
+    if (!isOwner && !isAdmin) {
+      throw new ForbiddenException('You are not permitted to edit this book.');
+    }
+
+    return this.prisma.book.update({
+      where: { id },
+      data,
+    });
   }
 }
