@@ -95,14 +95,23 @@ export class BookController {
 
   @Put(':id')
   @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(FileInterceptor('image', { storage }))
+  @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Edit book for ID' })
-  @ApiResponse({ status: 200, description: 'Book updated success' })
+  @ApiResponse({ status: 200, description: 'Book updated successfully' })
   async updateBook(
     @Param('id') id: string,
     @Body() body: UpdateBookDto,
+    @UploadedFile() file: Express.Multer.File,
     @Req() req: RequestWithUser,
   ) {
-    return this.bookService.updateBook(id, body, req.user.id, req.user.role);
+    return this.bookService.updateBook(
+      id,
+      body,
+      file,
+      req.user.id,
+      req.user.role,
+    );
   }
 
   @Delete(':id')

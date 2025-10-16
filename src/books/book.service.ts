@@ -96,27 +96,27 @@ export class BookService {
   async updateBook(
     id: string,
     data: UpdateBookDto,
+    image: Express.Multer.File | undefined,
     userId: string,
     role: 'USER' | 'ADMIN',
   ) {
-    const book = await this.prisma.book.findUnique({
-      where: { id },
-    });
-
-    if (!book) {
-      throw new NotFoundException(`Book with ID ${id} not found`);
-    }
+    const book = await this.prisma.book.findUnique({ where: { id } });
+    if (!book) throw new NotFoundException(`Book with ID ${id} not found`);
 
     const isOwner = book.ownerId === userId;
     const isAdmin = role === 'ADMIN';
-
     if (!isOwner && !isAdmin) {
       throw new ForbiddenException('You are not permitted to edit this book.');
     }
 
+    const imageUrl = image?.path || book.imageUrl;
+
     const updatedBook = await this.prisma.book.update({
       where: { id },
-      data,
+      data: {
+        ...data,
+        imageUrl,
+      },
     });
 
     return {
