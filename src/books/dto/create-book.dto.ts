@@ -1,4 +1,13 @@
-import { IsString, IsInt, IsEnum } from 'class-validator';
+import {
+  IsString,
+  IsInt,
+  IsEnum,
+  Matches,
+  Min,
+  IsDecimal,
+  IsNumber,
+  IsPositive,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { BookConditionEnum } from 'src/common/enums';
 import { Type } from 'class-transformer';
@@ -13,6 +22,9 @@ export class CreateBookDto {
   author: string;
 
   @ApiProperty({ example: '9788498382540' })
+  // @Matches(/^(97(8|9))?\d{9}(\d|X)$/, {
+  //   message: 'ISBN must be valid (ISBN-10 or ISBN-13)',
+  // })
   @IsString()
   isbn: string;
 
@@ -28,8 +40,12 @@ export class CreateBookDto {
   @IsString()
   location: string;
 
-  @ApiProperty({ example: 15 })
-  @IsInt()
+  @ApiProperty({ example: 4.99 })
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    { message: 'Price must be a valid number with up to 2 decimal places' },
+  )
+  @IsPositive({ message: 'Price must be greater than 0' })
   @Type(() => Number)
   price: number;
 
