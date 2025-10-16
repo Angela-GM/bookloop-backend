@@ -1,6 +1,7 @@
 import { IsString, IsInt, IsEnum } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { BookConditionEnum } from 'src/common/enums';
+import { Type } from 'class-transformer';
 
 export class CreateBookDto {
   @ApiProperty({ example: 'El nombre del viento' })
@@ -29,6 +30,7 @@ export class CreateBookDto {
 
   @ApiProperty({ example: 15 })
   @IsInt()
+  @Type(() => Number)
   price: number;
 
   @ApiProperty({ example: 'cmgkw5oee0000o9f8gmgg1sgi' })

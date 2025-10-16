@@ -29,6 +29,7 @@ import { storage } from 'src/cloudinary/cloudinary.config';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { RequestWithUser } from 'src/common/types/request-with-user.interface';
 import { AuthGuard } from '@nestjs/passport';
+import { BookResponseDto } from './dto/books-response.dto';
 
 @ApiTags('books')
 @Controller('books')
@@ -82,6 +83,14 @@ export class BookController {
   @ApiOperation({ summary: 'Get all books with pagination' })
   async findAll(@Query() paginationQuery: PaginationQueryDto) {
     return this.bookService.findAll(paginationQuery);
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Find book for ID' })
+  @ApiResponse({ status: 200, type: BookResponseDto })
+  @ApiResponse({ status: 404, description: 'Book not found' })
+  async findOne(@Param('id') id: string): Promise<BookResponseDto> {
+    return this.bookService.findOne(id);
   }
 
   @Put(':id')

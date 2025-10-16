@@ -16,6 +16,8 @@ export class BookService {
   async createBook(data: CreateBookDto & { imageUrl?: string }) {
     const { ownerId, price, condition, ...rest } = data;
 
+    console.log(typeof price, price);
+
     const prismaCondition =
       BookCondition[condition as keyof typeof BookCondition];
 
@@ -69,6 +71,26 @@ export class BookService {
         hasPreviousPage,
       },
     };
+  }
+
+  async findOne(id: string) {
+    const book = await this.prisma.book.findUnique({
+      where: { id },
+      include: {
+        owner: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    if (!book) {
+      throw new NotFoundException('Book with id ${id} not found');
+    }
+
+    return book;
   }
 
   async updateBook(
