@@ -29,6 +29,7 @@ import { storage } from 'src/cloudinary/cloudinary.config';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { RequestWithUser } from 'src/common/types/request-with-user.interface';
 import { AuthGuard } from '@nestjs/passport';
+import { BookResponseDto } from './dto/books-response.dto';
 
 @ApiTags('books')
 @Controller('books')
@@ -84,16 +85,33 @@ export class BookController {
     return this.bookService.findAll(paginationQuery);
   }
 
+  @Get(':id')
+  @ApiOperation({ summary: 'Find book for ID' })
+  @ApiResponse({ status: 200, type: BookResponseDto })
+  @ApiResponse({ status: 404, description: 'Book not found' })
+  async findOne(@Param('id') id: string): Promise<BookResponseDto> {
+    return this.bookService.findOne(id);
+  }
+
   @Put(':id')
   @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(FileInterceptor('image', { storage }))
+  @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Edit book for ID' })
-  @ApiResponse({ status: 200, description: 'Book updated success' })
+  @ApiResponse({ status: 200, description: 'Book updated successfully' })
   async updateBook(
     @Param('id') id: string,
     @Body() body: UpdateBookDto,
+    @UploadedFile() file: Express.Multer.File,
     @Req() req: RequestWithUser,
   ) {
-    return this.bookService.updateBook(id, body, req.user.id, req.user.role);
+    return this.bookService.updateBook(
+      id,
+      body,
+      file,
+      req.user.id,
+      req.user.role,
+    );
   }
 
   @Delete(':id')

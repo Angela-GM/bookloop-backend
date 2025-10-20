@@ -16,6 +16,8 @@ export class BookService {
   async createBook(data: CreateBookDto & { imageUrl?: string }) {
     const { ownerId, price, condition, ...rest } = data;
 
+    console.log(typeof price, price);
+
     const prismaCondition =
       BookCondition[condition as keyof typeof BookCondition];
 
@@ -71,30 +73,50 @@ export class BookService {
     };
   }
 
-  async updateBook(
-    id: string,
-    data: UpdateBookDto,
-    userId: string,
-    role: 'USER' | 'ADMIN',
-  ) {
+  async findOne(id: string) {
     const book = await this.prisma.book.findUnique({
       where: { id },
+      include: {
+        owner: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
     });
 
     if (!book) {
-      throw new NotFoundException(`Book with ID ${id} not found`);
+      throw new NotFoundException('Book with id ${id} not found');
     }
+
+    return book;
+  }
+
+  async updateBook(
+    id: string,
+    data: UpdateBookDto,
+    image: Express.Multer.File | undefined,
+    userId: string,
+    role: 'USER' | 'ADMIN',
+  ) {
+    const book = await this.prisma.book.findUnique({ where: { id } });
+    if (!book) throw new NotFoundException(`Book with ID ${id} not found`);
 
     const isOwner = book.ownerId === userId;
     const isAdmin = role === 'ADMIN';
-
     if (!isOwner && !isAdmin) {
       throw new ForbiddenException('You are not permitted to edit this book.');
     }
 
+    const imageUrl = image?.path || book.imageUrl;
+
     const updatedBook = await this.prisma.book.update({
       where: { id },
-      data,
+      data: {
+        ...data,
+        imageUrl,
+      },
     });
 
     return {
