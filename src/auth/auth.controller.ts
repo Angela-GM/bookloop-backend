@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -12,6 +20,7 @@ import { LoginDto } from './dto/login.dto';
 import { Request } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '@prisma/client';
+import { Response } from 'express';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -31,12 +40,23 @@ export class AuthController {
   @ApiOperation({ summary: 'Iniciar sesión' })
   @ApiBody({ type: LoginDto })
   @ApiResponse({ status: 200, description: 'Inicio de sesión exitoso' })
-  async login(@Body() loginDto: LoginDto) {
+  async login(
+    @Body() loginDto: LoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const user = await this.authService.validateUser(
       loginDto.email,
       loginDto.password,
     );
-    return this.authService.login(user);
+    const token = await this.authService.login(user);
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 días
+    });
+    return { message: 'Login exitoso' };
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -46,5 +66,11 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'Usuario autenticado' })
   async whoAmI(@Req() req: Request & { user: User }) {
     return req.user;
+  }
+
+  @Post('logout')
+  async logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('token');
+    return { message: 'Sesión cerrada' };
   }
 }

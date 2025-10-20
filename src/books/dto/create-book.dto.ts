@@ -19,8 +19,8 @@ export class CreateBookDto {
   @IsString()
   author: string;
 
-  @ApiProperty({ example: '9788498382540' })
-  @IsValidIsbn({ message: 'Invalid ISBN format' })
+  @ApiProperty({ example: '9783161484100', required: false })
+  @IsValidIsbn({ message: 'ISBN must be valid (ISBN-10 or ISBN-13)' })
   @IsOptional()
   @IsString()
   isbn: string;
