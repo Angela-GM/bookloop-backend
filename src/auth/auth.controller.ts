@@ -56,7 +56,10 @@ export class AuthController {
       sameSite: 'lax',
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 días
     });
-    return { message: 'Login exitoso' };
+    return {
+      message: 'Login exitoso',
+      token, // Devolver el token también para uso cross-domain
+    };
   }
 
   @UseGuards(AuthGuard('jwt'))
