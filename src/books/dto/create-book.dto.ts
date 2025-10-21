@@ -6,9 +6,9 @@ import {
   IsOptional,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { BookConditionEnum } from 'src/common/enums';
+import { BookConditionEnum } from '../../common/enums';
 import { Type } from 'class-transformer';
-import { IsValidIsbn } from 'src/validators/isbn.validator';
+import { IsValidIsbn } from '../../validators/isbn.validator';
 
 export class CreateBookDto {
   @ApiProperty({ example: 'El nombre del viento' })

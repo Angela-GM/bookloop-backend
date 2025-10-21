@@ -16,8 +16,6 @@ export class BookService {
   async createBook(data: CreateBookDto & { imageUrl?: string }) {
     const { ownerId, price, condition, ...rest } = data;
 
-    console.log(typeof price, price);
-
     const prismaCondition =
       BookCondition[condition as keyof typeof BookCondition];
 

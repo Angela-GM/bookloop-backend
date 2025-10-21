@@ -25,9 +25,9 @@ import {
 } from '@nestjs/swagger';
 import { PaginationQueryDto } from './dto/pagination-query.dto';
 import { PaginatedBooksResponseDto } from './dto/paginated-books-response.dto';
-import { storage } from 'src/cloudinary/cloudinary.config';
+import { storage } from '../cloudinary/cloudinary.config';
 import { UpdateBookDto } from './dto/update-book.dto';
-import { RequestWithUser } from 'src/common/types/request-with-user.interface';
+import { RequestWithUser } from '../common/types/request-with-user.interface';
 import { AuthGuard } from '@nestjs/passport';
 import { BookResponseDto } from './dto/books-response.dto';
 
