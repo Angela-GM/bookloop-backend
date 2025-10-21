@@ -29,12 +29,21 @@ async function bootstrap() {
   // Swagger Configuration
   const config = new DocumentBuilder()
     .setTitle('BookLoop API')
-    .setDescription('API documentation for BookLoop backend')
+    .setDescription(
+      'API documentation for BookLoop backend<br><br><a href="/api/docs-json" target="_blank" style="color: #3b82f6; text-decoration: none; font-size: 14px;">http://localhost:3001/api/docs-json</a>',
+    )
     .setVersion('1.0')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+
+  // Swagger endpoint is automatically set up by SwaggerModule
+  SwaggerModule.setup('api/docs', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+    customSiteTitle: 'BookLoop API Documentation',
+  });
 
   await app.listen(process.env.PORT ?? 3000);
 }
