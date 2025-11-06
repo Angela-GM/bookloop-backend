@@ -80,5 +80,5 @@ PORT=3000
 --- 
 ## 📜 Licencia Este proyecto está bajo la licencia MIT. Consulta el archivo `LICENSE` para más detalles. 
 --- 
-## 👩🏻‍💻 Autora Desarrollado con 💜 por **Angela** 
+## 👩🏻‍💻 Autora Desarrollado por **Angela** 
 🔗 [GitHub](https://github.com/Angela-GM) 💼 [LinkedIn](https://www.linkedin.com/in/angela-garcia-mu) 🌐 [Portfolio](#)
