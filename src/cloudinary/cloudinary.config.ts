@@ -13,7 +13,7 @@ export const storage = new CloudinaryStorage({
   cloudinary,
   params: (req, file) => ({
     public_id: `${Date.now()}-${file.originalname.replace(/\.[^/.]+$/, '').replace(/\s+/g, '-')}`,
-    allowed_formats: ['jpg', 'png', 'jpeg'],
     folder: 'bookloop',
+    resource_type: 'auto',
   }),
 });

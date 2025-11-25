@@ -49,4 +49,13 @@ export class CreateBookDto {
   @ApiProperty({ example: 'cmgkw5oee0000o9f8gmgg1sgi' })
   @IsString()
   ownerId: string;
+
+  @ApiProperty({
+    example: 'https://books.google.com/books/content?id=...',
+    required: false,
+    description: 'URL de la imagen del libro (si no usas archivo)',
+  })
+  @IsOptional()
+  @IsString()
+  imageUrl?: string;
 }

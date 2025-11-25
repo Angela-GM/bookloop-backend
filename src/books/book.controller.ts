@@ -75,7 +75,24 @@ export class BookController {
     @UploadedFile() file: Express.Multer.File,
     @Body() body: CreateBookDto,
   ) {
-    return this.bookService.createBook({ ...body, imageUrl: file?.path });
+    try {
+      console.log('📥 Controlador recibió:');
+      console.log('  - Body:', body);
+      console.log('  - File:', file ? { filename: file.filename, path: file.path, size: file.size } : 'NO ARCHIVO');
+      
+      const imageData = {
+        ...body,
+        localImagePath: file?.path,
+      }
+      
+      console.log('📤 Pasando al servicio:', imageData);
+      const result = await this.bookService.createBook({ ...imageData });
+      console.log('✅ Libro creado:', result);
+      return result;
+    } catch (error) {
+      console.error('❌ Error en createBook:', error);
+      throw error;
+    }
   }
 
   @ApiResponse({ status: 200, type: PaginatedBooksResponseDto })
