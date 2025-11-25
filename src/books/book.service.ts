@@ -16,8 +16,11 @@ export class BookService {
     private readonly prisma: PrismaService,
     private readonly cloudinaryService: CloudinaryService,
   ) {}
-  async createBook(data: CreateBookDto & { imageUrl?: string, localImagePath?: string }) {
-    const { ownerId, price, condition, localImagePath, imageUrl, ...rest } = data;
+  async createBook(
+    data: CreateBookDto & { imageUrl?: string; localImagePath?: string },
+  ) {
+    const { ownerId, price, condition, localImagePath, imageUrl, ...rest } =
+      data;
 
     console.log('📚 createBook recibió:', {
       ownerId,
@@ -30,19 +33,18 @@ export class BookService {
 
     const prismaCondition =
       BookCondition[condition as keyof typeof BookCondition];
-      let finalImageUrl: string | undefined;
-      
-      if(localImagePath) {
-        console.log('📤 Subiendo archivo a Cloudinary:', localImagePath);
-        finalImageUrl = await this.cloudinaryService.uploadFile(localImagePath);
-        console.log('✅ Archivo subido. URL:', finalImageUrl);
+    let finalImageUrl: string | undefined;
 
-      }else if(imageUrl) {
-        console.log('🔗 Usando URL directa:', imageUrl);
-        finalImageUrl = imageUrl;
-      }
+    if (localImagePath) {
+      console.log('📤 Subiendo archivo a Cloudinary:', localImagePath);
+      finalImageUrl = await this.cloudinaryService.uploadFile(localImagePath);
+      console.log('✅ Archivo subido. URL:', finalImageUrl);
+    } else if (imageUrl) {
+      console.log('🔗 Usando URL directa:', imageUrl);
+      finalImageUrl = imageUrl;
+    }
 
-      console.log('💾 Guardando en BD con imageUrl:', finalImageUrl);
+    console.log('💾 Guardando en BD con imageUrl:', finalImageUrl);
 
     return this.prisma.book.create({
       data: {

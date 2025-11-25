@@ -13,12 +13,15 @@ async function bootstrap() {
 
   // Middleware para loguear TODAS las peticiones (incluso errores)
   app.use((req, res, next) => {
-    const bodyStr = req.method !== 'GET' && req.body 
-      ? JSON.stringify(req.body).substring(0, 100) 
-      : 'N/A';
+    const bodyStr =
+      req.method !== 'GET' && req.body
+        ? JSON.stringify(req.body).substring(0, 100)
+        : 'N/A';
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
-    console.log(`  Headers: Authorization=${req.headers.authorization ? '✅' : '❌'}`);
-    
+    console.log(
+      `  Headers: Authorization=${req.headers.authorization ? '✅' : '❌'}`,
+    );
+
     next();
   });
 

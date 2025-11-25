@@ -78,13 +78,18 @@ export class BookController {
     try {
       console.log('📥 Controlador recibió:');
       console.log('  - Body:', body);
-      console.log('  - File:', file ? { filename: file.filename, path: file.path, size: file.size } : 'NO ARCHIVO');
-      
+      console.log(
+        '  - File:',
+        file
+          ? { filename: file.filename, path: file.path, size: file.size }
+          : 'NO ARCHIVO',
+      );
+
       const imageData = {
         ...body,
         localImagePath: file?.path,
-      }
-      
+      };
+
       console.log('📤 Pasando al servicio:', imageData);
       const result = await this.bookService.createBook({ ...imageData });
       console.log('✅ Libro creado:', result);
